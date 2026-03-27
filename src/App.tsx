@@ -532,7 +532,7 @@ export default function App() {
             <div className="header-pills">
               <span className="pill"><strong>10</strong>Teams</span>
               <span className="pill"><strong>4</strong>Courts</span>
-              <span className="pill"><strong>10 min</strong>Groups</span>
+              <span className="pill"><strong>10 min</strong>Groups & SF</span>
               <span className="pill"><strong>Best of 3</strong>Final</span>
             </div>
           </div>
