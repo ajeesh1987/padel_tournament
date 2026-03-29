@@ -1,9 +1,9 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
 
 // ─── CONFIG ────────────────────────────────────────────────────────────────
-const GAMES_START = new Date('2026-04-15T16:00:00') // April 15th, 16:00 local time
-const ADMIN_CODE = 'letmein'                         // Change to your secret code
-const GAMES_LOCKED = true                            // Flip to false to open score entry
+const GAMES_START = new Date('2026-04-15T16:00:00+02:00')
+const ADMIN_CODE = 'letmein'
+const DEFAULT_LOCKED = true                          // Flip to false to open score entry
 // ───────────────────────────────────────────────────────────────────────────
 
 const style = `
@@ -429,24 +429,39 @@ function AdminGate({ isAdmin, setIsAdmin }: { isAdmin: boolean; setIsAdmin: (v: 
   )
 }
 
-function AdminPanel({ onSignOut }: { onSignOut: () => void }) {
+function AdminPanel({
+  isLocked,
+  onToggleLock,
+  onReset,
+  onSignOut,
+}: any) {
   return (
     <>
       <div className="admin-panel">
         <h3>⚙️ Admin</h3>
+
         <div className="admin-panel-row">
           <span>Score entry</span>
-          <span className={GAMES_LOCKED ? 'admin-badge-locked' : 'admin-badge-open'}>
-            {GAMES_LOCKED ? '🔒 Locked' : '🔓 Open'}
+          <span className={isLocked ? 'admin-badge-locked' : 'admin-badge-open'}>
+            {isLocked ? '🔒 Locked' : '🔓 Open'}
           </span>
         </div>
-        <p className="admin-hint">
-          Toggle by changing <code>GAMES_LOCKED</code> at the top of <code>App.tsx</code>
-        </p>
+
+        <div className="admin-modal-actions" style={{ justifyContent: "flex-start" }}>
+          <button onClick={onToggleLock} className="admin-modal-submit">
+            {isLocked ? "Unlock scoring" : "Lock scoring"}
+          </button>
+          <button onClick={onReset}>
+            Reset scores
+          </button>
+        </div>
       </div>
-      <button className="admin-signout" onClick={onSignOut}>sign out of admin</button>
+
+      <button className="admin-signout" onClick={onSignOut}>
+        sign out of admin
+      </button>
     </>
-  )
+  );
 }
 
 // ─── TYPES & DATA ─────────────────────────────────────────────────────────────
@@ -590,14 +605,16 @@ function StandingsCard({ group, data }: { group: string; data: any[] }) {
 export default function App() {
   const [teams] = useState(initialTeams);
   const [groupMatches, setGroupMatches] = useState(initialGroupMatches);
+  const [isAdmin, setIsAdmin] = useState(false);
+const [isLocked, setIsLocked] = useState(DEFAULT_LOCKED);
+
   const [sf1, setSf1] = useState(emptyKO);
   const [sf2, setSf2] = useState(emptyKO);
   const [finalGames, setFinalGames] = useState<GameScore[]>([
     { t1:"", t2:"" }, { t1:"", t2:"" }, { t1:"", t2:"" },
   ]);
-  const [isAdmin, setIsAdmin] = useState(false);
 
-  const locked = GAMES_LOCKED && !isAdmin;
+const locked = isLocked && !isAdmin;
 
   const teamsById = Object.fromEntries(teams.map(t => [t.id, t])) as Record<string, Team>;
 
@@ -625,7 +642,9 @@ export default function App() {
     B.sort((a,b) => b.points-a.points || b.gameDiff-a.gameDiff);
     return { A, B };
   }, [groupMatches, teamsById]);
-
+const resetAll = () => {
+  setGroupMatches(initialGroupMatches);
+};
   const q = {
     a1: standings.A[0]?.teamId ?? null, a2: standings.A[1]?.teamId ?? null,
     b1: standings.B[0]?.teamId ?? null, b2: standings.B[1]?.teamId ?? null,
@@ -663,7 +682,12 @@ export default function App() {
       <div className="app">
         <div className="container">
 
-          {isAdmin && <AdminPanel onSignOut={() => setIsAdmin(false)} />}
+          {isAdmin && <AdminPanel
+  isLocked={isLocked}
+  onToggleLock={() => setIsLocked(p => !p)}
+  onReset={resetAll}
+  onSignOut={() => setIsAdmin(false)}
+/>}
 
           <div className="header">
             <div>
