@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
 
 // ─── CONFIG ────────────────────────────────────────────────────────────────
-const GAMES_START = new Date('2025-04-15T16:00:00') // April 15th, 16:00 local time
+const GAMES_START = new Date('2026-04-15T16:00:00') // April 15th, 16:00 local time
 const ADMIN_CODE = 'letmein'                         // Change to your secret code
 const GAMES_LOCKED = true                            // Flip to false to open score entry
 // ───────────────────────────────────────────────────────────────────────────
