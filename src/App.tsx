@@ -733,10 +733,10 @@ const resetAll = () => {
 
           <div className="final-card">
             <div className="final-header">
-              <div className="final-title">Final</div>
+              <div className="final-title">Final (Americano - 21 points)</div>
               <div className="final-meta">
                 <span className="final-badge">Best of 3</span>
-                <span className="final-duration">20–25 min · first to win 2 games</span>
+                <span className="final-duration">first to win 2 games</span>
               </div>
             </div>
             <div className="games-tally">
