@@ -716,7 +716,7 @@ const resetAll = () => {
           </div>
 
           <div className="section">
-            <div className="section-title"><div className="section-title-bar" />Semi Finals</div>
+            <div className="section-title"><div className="section-title-bar" />Semi Finals (10-minute time limit. Each player gets 2 serves. The team with the most points at the end wins)</div>
             <div className="ko-grid">
               <div className="ko-card">
                 <div className="ko-card-label">Semi Final 1 · A1 vs B2</div>
