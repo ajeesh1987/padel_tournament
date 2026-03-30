@@ -703,7 +703,7 @@ const resetAll = () => {
           </div>
 
           <div className="section">
-            <div className="section-title"><div className="section-title-bar" />Group Matches</div>
+            <div className="section-title"><div className="section-title-bar" />Group Matches (10-minute time limit. Each player gets 2 serves. The team with the most points at the end wins)</div>
             <div className="group-divider"><span className="group-tag">Group A</span><div className="group-line" /></div>
             {groupA.map(m => <MatchRow key={m.id} m={m} teamsById={teamsById} updateGroup={updateGroup} locked={locked} />)}
             <div className="group-divider"><span className="group-tag">Group B</span><div className="group-line" /></div>
