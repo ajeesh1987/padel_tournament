@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
 
 // ─── CONFIG ────────────────────────────────────────────────────────────────
-const GAMES_START = new Date('2026-04-15T16:00:00+02:00')
+const GAMES_START = new Date('2026-04-15T17:00:00+02:00')
 const ADMIN_CODE = 'letmein'
 const DEFAULT_LOCKED = true                          // Flip to false to open score entry
 // ───────────────────────────────────────────────────────────────────────────
@@ -704,13 +704,13 @@ const resetAll = () => {
     <span className="pill"><strong>Best of 3</strong> Final</span>
 
     <a
-      href="https://github.com/ajeesh1987/padel_tournament/blob/main/README.md"
+      href="https://raw.githubusercontent.com/ajeesh1987/padel_tournament/refs/heads/main/README.md"
       target="_blank"
       rel="noopener noreferrer"
       className="pill"
       style={{ textDecoration: "none" }}
     >
-      🎲 Draw
+      🎲 View Draw guidelines
     </a>
   </div>
 </div>
