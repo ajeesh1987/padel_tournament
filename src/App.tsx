@@ -688,19 +688,32 @@ const resetAll = () => {
   onReset={resetAll}
   onSignOut={() => setIsAdmin(false)}
 />}
+<div className="header">
+  <div>
+    <div className="header-eyebrow">Padel Tournament</div>
+    <div className="header-title">
+      Convert &amp; Create<br />
+      <span>Impact</span>
+    </div>
+  </div>
 
-          <div className="header">
-            <div>
-              <div className="header-eyebrow">Padel Tournament</div>
-              <div className="header-title">Convert &amp; Create<br /><span>Impact</span></div>
-            </div>
-            <div className="header-pills">
-              <span className="pill"><strong>10</strong>Teams</span>
-              <span className="pill"><strong>4</strong>Courts</span>
-              <span className="pill"><strong>10 min</strong>Groups</span>
-              <span className="pill"><strong>Best of 3</strong>Final</span>
-            </div>
-          </div>
+  <div className="header-pills">
+    <span className="pill"><strong>10</strong> Teams</span>
+    <span className="pill"><strong>4</strong> Courts</span>
+    <span className="pill"><strong>10 min</strong> Matches</span>
+    <span className="pill"><strong>Best of 3</strong> Final</span>
+
+    <a
+      href="https://github.com/ajeesh1987/padel_tournament/blob/main/README.md"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="pill"
+      style={{ textDecoration: "none" }}
+    >
+      🎲 Draw
+    </a>
+  </div>
+</div>
 
           <div className="section">
             <div className="section-title"><div className="section-title-bar" />Group Matches (10 min time limit. Each player gets 2 serves. The team with the most points at the end wins)</div>
