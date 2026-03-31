@@ -607,9 +607,17 @@ export default function App() {
   const [groupMatches, setGroupMatches] = useState(initialGroupMatches);
   const [isAdmin, setIsAdmin] = useState(false);
 const [isLocked, setIsLocked] = useState(DEFAULT_LOCKED);
+const [sf1, setSf1] = useState([
+  { t1: "", t2: "" },
+  { t1: "", t2: "" },
+  { t1: "", t2: "" },
+]);
 
-  const [sf1, setSf1] = useState(emptyKO);
-  const [sf2, setSf2] = useState(emptyKO);
+const [sf2, setSf2] = useState([
+  { t1: "", t2: "" },
+  { t1: "", t2: "" },
+  { t1: "", t2: "" },
+]);
   const [finalGames, setFinalGames] = useState<GameScore[]>([
     { t1:"", t2:"" }, { t1:"", t2:"" }, { t1:"", t2:"" },
   ]);
@@ -651,8 +659,11 @@ const resetAll = () => {
   };
   const sf1t1 = q.a1, sf1t2 = q.b2;
   const sf2t1 = q.b1, sf2t2 = q.a2;
-  const sf1Winner = getWinner(sf1t1, sf1t2, sf1.t1, sf1.t2);
-  const sf2Winner = getWinner(sf2t1, sf2t2, sf2.t1, sf2.t2);
+ const [sf1w1, sf1w2] = countWins(sf1);
+const [sf2w1, sf2w2] = countWins(sf2);
+
+const sf1Winner = sf1w1 >= 2 ? sf1t1 : sf1w2 >= 2 ? sf1t2 : null;
+const sf2Winner = sf2w1 >= 2 ? sf2t1 : sf2w2 >= 2 ? sf2t2 : null;
   const finalT1 = sf1Winner, finalT2 = sf2Winner;
   const [fw1, fw2] = countWins(finalGames);
   const finalOver = fw1 >= 2 || fw2 >= 2;
@@ -728,7 +739,7 @@ const resetAll = () => {
             <StandingsCard group="B" data={standings.B} />
           </div>
 
-          <div className="section">
+<div className="section">
   <div className="section-title">
     <div className="section-title-bar" />
     Semi Finals (Americano · 21 points)
@@ -738,6 +749,129 @@ const resetAll = () => {
     <span className="final-badge">Best of 3</span>
     <span className="final-duration">first to win 2 games</span>
   </div>
+
+  <div className="ko-grid">
+
+    {/* SF1 */}
+    <div className="ko-card">
+      <div className="ko-card-label">Semi Final 1 · A1 vs B2</div>
+
+      {sf1.map((g, idx) => {
+        const [w1, w2] = countWins(sf1);
+
+        const game1Won = !!getWinner(sf1t1, sf1t2, sf1[0].t1, sf1[0].t2);
+        const game2Won = !!getWinner(sf1t1, sf1t2, sf1[1].t1, sf1[1].t2);
+
+        const enabled =
+          idx === 0 ||
+          (idx === 1 && game1Won) ||
+          (idx === 2 && game1Won && game2Won && w1 === 1 && w2 === 1);
+
+        const winner = getWinner(sf1t1, sf1t2, g.t1, g.t2);
+
+        return (
+          <div key={idx} style={{ marginBottom: 10, opacity: enabled ? 1 : 0.4 }}>
+            <div style={{ fontSize: 11, marginBottom: 4 }}>
+              Game {idx + 1}
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 8, alignItems: "center" }}>
+              <div style={{ fontSize: 13, fontWeight: winner === sf1t1 ? 600 : 400 }}>
+                {sf1t1 ? teamsById[sf1t1]?.name : "TBD"}
+              </div>
+
+              <div style={{ display: "flex", gap: 6 }}>
+                <input
+                  className="game-score-input"
+                  value={g.t1}
+                  disabled={!enabled || locked}
+                  onChange={e => {
+                    const v = e.target.value.replace(/\D/g, "").slice(0, 2);
+                    setSf1(prev => prev.map((x, i) => i === idx ? { ...x, t1: v } : x));
+                  }}
+                />
+                <span>VS</span>
+                <input
+                  className="game-score-input"
+                  value={g.t2}
+                  disabled={!enabled || locked}
+                  onChange={e => {
+                    const v = e.target.value.replace(/\D/g, "").slice(0, 2);
+                    setSf1(prev => prev.map((x, i) => i === idx ? { ...x, t2: v } : x));
+                  }}
+                />
+              </div>
+
+              <div style={{ textAlign: "right", fontSize: 13, fontWeight: winner === sf1t2 ? 600 : 400 }}>
+                {sf1t2 ? teamsById[sf1t2]?.name : "TBD"}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+    {/* SF2 */}
+    <div className="ko-card">
+      <div className="ko-card-label">Semi Final 2 · B1 vs A2</div>
+
+      {sf2.map((g, idx) => {
+        const [w1, w2] = countWins(sf2);
+
+        const game1Won = !!getWinner(sf2t1, sf2t2, sf2[0].t1, sf2[0].t2);
+        const game2Won = !!getWinner(sf2t1, sf2t2, sf2[1].t1, sf2[1].t2);
+
+        const enabled =
+          idx === 0 ||
+          (idx === 1 && game1Won) ||
+          (idx === 2 && game1Won && game2Won && w1 === 1 && w2 === 1);
+
+        const winner = getWinner(sf2t1, sf2t2, g.t1, g.t2);
+
+        return (
+          <div key={idx} style={{ marginBottom: 10, opacity: enabled ? 1 : 0.4 }}>
+            <div style={{ fontSize: 11, marginBottom: 4 }}>
+              Game {idx + 1}
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 8, alignItems: "center" }}>
+              <div style={{ fontSize: 13, fontWeight: winner === sf2t1 ? 600 : 400 }}>
+                {sf2t1 ? teamsById[sf2t1]?.name : "TBD"}
+              </div>
+
+              <div style={{ display: "flex", gap: 6 }}>
+                <input
+                  className="game-score-input"
+                  value={g.t1}
+                  disabled={!enabled || locked}
+                  onChange={e => {
+                    const v = e.target.value.replace(/\D/g, "").slice(0, 2);
+                    setSf2(prev => prev.map((x, i) => i === idx ? { ...x, t1: v } : x));
+                  }}
+                />
+                <span>VS</span>
+                <input
+                  className="game-score-input"
+                  value={g.t2}
+                  disabled={!enabled || locked}
+                  onChange={e => {
+                    const v = e.target.value.replace(/\D/g, "").slice(0, 2);
+                    setSf2(prev => prev.map((x, i) => i === idx ? { ...x, t2: v } : x));
+                  }}
+                />
+              </div>
+
+              <div style={{ textAlign: "right", fontSize: 13, fontWeight: winner === sf2t2 ? 600 : 400 }}>
+                {sf2t2 ? teamsById[sf2t2]?.name : "TBD"}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+  </div>
+</div>
 
   <div className="ko-grid">
     <div className="ko-card">
