@@ -553,6 +553,7 @@ function MatchRow({ m, teamsById, updateGroup, locked }: {
       <div className={`team-name team-name-right ${w === m.team2Id ? "winner" : ""}`}>{teamsById[m.team2Id].name}</div>
     </div>
   );
+}
 
 
 function StandingsCard({ group, data }: { group: string; data: any[] }) {
