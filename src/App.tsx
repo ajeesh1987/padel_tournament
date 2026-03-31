@@ -739,15 +739,18 @@ const sf2Winner = sf2w1 >= 2 ? sf2t1 : sf2w2 >= 2 ? sf2t2 : null;
       <div className="ko-card-label">Semi Final 1 · A1 vs B2</div>
 
       {sf1.map((g, idx) => {
-        const [w1, w2] = countWins(sf1);
-
         const game1Won = !!getWinner(sf1t1, sf1t2, sf1[0].t1, sf1[0].t2);
         const game2Won = !!getWinner(sf1t1, sf1t2, sf1[1].t1, sf1[1].t2);
+        const game1w1 = game1Won && getWinner(sf1t1, sf1t2, sf1[0].t1, sf1[0].t2) === sf1t1;
+        const game2w2 = game2Won && getWinner(sf1t1, sf1t2, sf1[1].t1, sf1[1].t2) === sf1t2;
+        const game1w2 = game1Won && getWinner(sf1t1, sf1t2, sf1[0].t1, sf1[0].t2) === sf1t2;
+        const game2w1 = game2Won && getWinner(sf1t1, sf1t2, sf1[1].t1, sf1[1].t2) === sf1t1;
+        const needsGame3 = game1Won && game2Won && ((game1w1 && game2w2) || (game1w2 && game2w1));
 
         const enabled =
           idx === 0 ||
           (idx === 1 && game1Won) ||
-          (idx === 2 && game1Won && game2Won && w1 === 1 && w2 === 1);
+          (idx === 2 && needsGame3);
 
         const winner = getWinner(sf1t1, sf1t2, g.t1, g.t2);
 
@@ -798,15 +801,18 @@ const sf2Winner = sf2w1 >= 2 ? sf2t1 : sf2w2 >= 2 ? sf2t2 : null;
       <div className="ko-card-label">Semi Final 2 · B1 vs A2</div>
 
       {sf2.map((g, idx) => {
-        const [w1, w2] = countWins(sf2);
-
         const game1Won = !!getWinner(sf2t1, sf2t2, sf2[0].t1, sf2[0].t2);
         const game2Won = !!getWinner(sf2t1, sf2t2, sf2[1].t1, sf2[1].t2);
+        const game1w1 = game1Won && getWinner(sf2t1, sf2t2, sf2[0].t1, sf2[0].t2) === sf2t1;
+        const game2w2 = game2Won && getWinner(sf2t1, sf2t2, sf2[1].t1, sf2[1].t2) === sf2t2;
+        const game1w2 = game1Won && getWinner(sf2t1, sf2t2, sf2[0].t1, sf2[0].t2) === sf2t2;
+        const game2w1 = game2Won && getWinner(sf2t1, sf2t2, sf2[1].t1, sf2[1].t2) === sf2t1;
+        const needsGame3 = game1Won && game2Won && ((game1w1 && game2w2) || (game1w2 && game2w1));
 
         const enabled =
           idx === 0 ||
           (idx === 1 && game1Won) ||
-          (idx === 2 && game1Won && game2Won && w1 === 1 && w2 === 1);
+          (idx === 2 && needsGame3);
 
         const winner = getWinner(sf2t1, sf2t2, g.t1, g.t2);
 
