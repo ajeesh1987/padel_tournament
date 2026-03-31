@@ -499,7 +499,6 @@ const initialGroupMatches: GroupMatch[] = [
   { id:"B5", group:"B", round:3, court:3, team1Id:"T9", team2Id:"T10", team1Games:"", team2Games:"" },
 ];
 
-const emptyKO = { t1:"", t2:"" };
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 function parseScore(v: string) {
