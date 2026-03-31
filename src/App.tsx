@@ -729,20 +729,62 @@ const resetAll = () => {
           </div>
 
           <div className="section">
-            <div className="section-title"><div className="section-title-bar" />Semi Finals (21 points. Best of 3)</div>
-            <div className="ko-grid">
-              <div className="ko-card">
-                <div className="ko-card-label">Semi Final 1 · A1 vs B2</div>
-                <KOTeam teamId={sf1t1} games={sf1.t1} otherId={sf1t2} otherGames={sf1.t2} teamsById={teamsById} locked={locked} onChange={v => setSf1(p => ({ ...p, t1: v }))} />
-                <KOTeam teamId={sf1t2} games={sf1.t2} otherId={sf1t1} otherGames={sf1.t1} teamsById={teamsById} locked={locked} onChange={v => setSf1(p => ({ ...p, t2: v }))} />
-              </div>
-              <div className="ko-card">
-                <div className="ko-card-label">Semi Final 2 · B1 vs A2</div>
-                <KOTeam teamId={sf2t1} games={sf2.t1} otherId={sf2t2} otherGames={sf2.t2} teamsById={teamsById} locked={locked} onChange={v => setSf2(p => ({ ...p, t1: v }))} />
-                <KOTeam teamId={sf2t2} games={sf2.t2} otherId={sf2t1} otherGames={sf2.t1} teamsById={teamsById} locked={locked} onChange={v => setSf2(p => ({ ...p, t2: v }))} />
-              </div>
-            </div>
-          </div>
+  <div className="section-title">
+    <div className="section-title-bar" />
+    Semi Finals (Americano · 21 points)
+  </div>
+
+  <div className="final-meta" style={{ marginBottom: 12 }}>
+    <span className="final-badge">Best of 3</span>
+    <span className="final-duration">first to win 2 games</span>
+  </div>
+
+  <div className="ko-grid">
+    <div className="ko-card">
+      <div className="ko-card-label">Semi Final 1 · A1 vs B2</div>
+      <KOTeam
+        teamId={sf1t1}
+        games={sf1.t1}
+        otherId={sf1t2}
+        otherGames={sf1.t2}
+        teamsById={teamsById}
+        locked={locked}
+        onChange={v => setSf1(p => ({ ...p, t1: v }))}
+      />
+      <KOTeam
+        teamId={sf1t2}
+        games={sf1.t2}
+        otherId={sf1t1}
+        otherGames={sf1.t1}
+        teamsById={teamsById}
+        locked={locked}
+        onChange={v => setSf1(p => ({ ...p, t2: v }))}
+      />
+    </div>
+
+    <div className="ko-card">
+      <div className="ko-card-label">Semi Final 2 · B1 vs A2</div>
+      <KOTeam
+        teamId={sf2t1}
+        games={sf2.t1}
+        otherId={sf2t2}
+        otherGames={sf2.t2}
+        teamsById={teamsById}
+        locked={locked}
+        onChange={v => setSf2(p => ({ ...p, t1: v }))}
+      />
+      <KOTeam
+        teamId={sf2t2}
+        games={sf2.t2}
+        otherId={sf2t1}
+        otherGames={sf2.t1}
+        teamsById={teamsById}
+        locked={locked}
+        onChange={v => setSf2(p => ({ ...p, t2: v }))}
+      />
+    </div>
+  </div>
+</div>
 
           <div className="final-card">
             <div className="final-header">
