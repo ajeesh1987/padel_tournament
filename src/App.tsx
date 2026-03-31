@@ -555,22 +555,7 @@ function MatchRow({ m, teamsById, updateGroup, locked }: {
   );
 }
 
-function KOTeam({ teamId, games, onChange, otherId, otherGames, teamsById, locked }: {
-  teamId: string|null; games: string; onChange: (v: string) => void;
-  otherId: string|null; otherGames: string; teamsById: Record<string, Team>; locked: boolean;
-}) {
-  const s1 = parseScore(games), s2 = parseScore(otherGames);
-  const isWinner = teamId && s1 !== null && s2 !== null && s1 > s2;
-  return (
-    <div className={`ko-team ${isWinner ? "winner" : ""}`}>
-      <span className={`ko-team-name ${!teamId ? "tbd" : ""}`}>
-        {teamId ? (teamsById[teamId]?.name ?? "TBD") : "TBD"}
-      </span>
-      <input type="text" inputMode="numeric" pattern="[0-9]*" className="ko-score"
-        value={games} disabled={!teamId || !otherId || locked}
-        onChange={e => onChange(e.target.value.replace(/\D/g,"").slice(0,2))} />
-    </div>
-  );
+
 }
 
 function StandingsCard({ group, data }: { group: string; data: any[] }) {
