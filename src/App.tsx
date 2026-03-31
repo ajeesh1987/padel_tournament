@@ -652,10 +652,15 @@ const sf2Winner = sf2w1 >= 2 ? sf2t1 : sf2w2 >= 2 ? sf2t2 : null;
   const champion = finalOver ? (fw1 > fw2 ? finalT1 : finalT2) : null;
   const game1Won = !!getWinner(finalT1, finalT2, finalGames[0].t1, finalGames[0].t2);
   const game2Won = !!getWinner(finalT1, finalT2, finalGames[1].t1, finalGames[1].t2);
+  const finalGame1w1 = game1Won && getWinner(finalT1, finalT2, finalGames[0].t1, finalGames[0].t2) === finalT1;
+  const finalGame2w2 = game2Won && getWinner(finalT1, finalT2, finalGames[1].t1, finalGames[1].t2) === finalT2;
+  const finalGame1w2 = game1Won && getWinner(finalT1, finalT2, finalGames[0].t1, finalGames[0].t2) === finalT2;
+  const finalGame2w1 = game2Won && getWinner(finalT1, finalT2, finalGames[1].t1, finalGames[1].t2) === finalT1;
+  const finalNeedsGame3 = game1Won && game2Won && ((finalGame1w1 && finalGame2w2) || (finalGame1w2 && finalGame2w1));
   const gameEnabled = [
     !!finalT1 && !!finalT2,
     game1Won,
-    game1Won && game2Won && fw1 === 1 && fw2 === 1,
+    finalNeedsGame3,
   ];
 
   const updateGroup = (id: string, field: string, val: string) =>
