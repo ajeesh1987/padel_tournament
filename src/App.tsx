@@ -643,8 +643,47 @@ export default function App() {
     return { A, B };
   }, [groupMatches, teamsById]);
 
-  const resetAll = () => { setGroupMatches(initialGroupMatches); };
+const resetAll = async () => {
+    // 1. Safety check
+    if (!window.confirm("Are you sure? This will wipe ALL scores from the database forever.")) {
+      return;
+    }
 
+    try {
+      // 2. Clear Group Matches in Supabase
+      // We set scores to null for all rows
+      const { error: groupError } = await supabase
+        .from('group_matches')
+        .update({ team1_score: null, team2_score: null })
+        .neq('id', 'null'); // Standard hack to select all rows
+
+      // 3. Clear KO Games (Semi-finals & Finals) in Supabase
+      const { error: koError } = await supabase
+        .from('ko_games')
+        .delete()
+        .in('match_id', ['SF1', 'SF2', 'FINAL']);
+
+      if (groupError || koError) throw groupError || koError;
+
+      // 4. Reset all local states to clear the UI immediately
+      setGroupMatches(initialGroupMatches);
+      
+      const emptySeries = () => [
+        { t1: "", t2: "" }, 
+        { t1: "", t2: "" }, 
+        { t1: "", t2: "" }
+      ];
+      
+      setSf1(emptySeries());
+      setSf2(emptySeries());
+      setFinalGames(emptySeries());
+
+      alert("Database and local scores have been reset.");
+    } catch (err) {
+      console.error("Reset failed:", err);
+      alert("Failed to clear database. Check console for details.");
+    }
+  };
   const anyAPlayed = groupMatches.filter(m => m.group === "A").some(m => m.team1Games !== '' && m.team2Games !== '')
   const anyBPlayed = groupMatches.filter(m => m.group === "B").some(m => m.team1Games !== '' && m.team2Games !== '')
 
