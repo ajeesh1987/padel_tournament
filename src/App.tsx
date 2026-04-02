@@ -667,10 +667,15 @@ const locked = isLocked && !isAdmin;
 const resetAll = () => {
   setGroupMatches(initialGroupMatches);
 };
-  const q = {
-    a1: standings.A[0]?.teamId ?? null, a2: standings.A[1]?.teamId ?? null,
-    b1: standings.B[0]?.teamId ?? null, b2: standings.B[1]?.teamId ?? null,
-  };
+  const anyAPlayed = groupMatches.filter(m => m.group === "A").some(m => m.team1Games !== '' && m.team2Games !== '')
+const anyBPlayed = groupMatches.filter(m => m.group === "B").some(m => m.team1Games !== '' && m.team2Games !== '')
+
+const q = {
+  a1: anyAPlayed ? standings.A[0]?.teamId ?? null : null,
+  a2: anyAPlayed ? standings.A[1]?.teamId ?? null : null,
+  b1: anyBPlayed ? standings.B[0]?.teamId ?? null : null,
+  b2: anyBPlayed ? standings.B[1]?.teamId ?? null : null,
+};
   const sf1t1 = q.a1, sf1t2 = q.b2;
   const sf2t1 = q.b1, sf2t2 = q.a2;
  const [sf1w1, sf1w2] = countWins(sf1);
@@ -837,6 +842,7 @@ setSf1(prev => {
     game_number: idx + 1,
     team1_score: g.t1 === '' ? null : Number(g.t1),
     team2_score: g.t2 === '' ? null : Number(g.t2),
+    }, { onConflict: 'match_id,game_number' })
   }).then(({ error }) => { if (error) console.error(error) })
   return updated
 })                  }}
@@ -856,6 +862,7 @@ setSf1(prev => {
     game_number: idx + 1,
     team1_score: g.t1 === '' ? null : Number(g.t1),
     team2_score: g.t2 === '' ? null : Number(g.t2),
+        }, { onConflict: 'match_id,game_number' })
   }).then(({ error }) => { if (error) console.error(error) })
   return updated
 })                  }}
@@ -917,6 +924,8 @@ setSf2(prev => {
     game_number: idx + 1,
     team1_score: g.t1 === '' ? null : Number(g.t1),
     team2_score: g.t2 === '' ? null : Number(g.t2),
+        }, { onConflict: 'match_id,game_number' })
+
   }).then(({ error }) => { if (error) console.error(error) })
   return updated
 })                  }}
@@ -936,6 +945,8 @@ setSf2(prev => {
     game_number: idx + 1,
     team1_score: g.t1 === '' ? null : Number(g.t1),
     team2_score: g.t2 === '' ? null : Number(g.t2),
+        }, { onConflict: 'match_id,game_number' })
+
   }).then(({ error }) => { if (error) console.error(error) })
   return updated
 })                  }}
