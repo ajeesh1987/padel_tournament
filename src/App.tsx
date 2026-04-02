@@ -644,10 +644,7 @@ export default function App() {
   }, [groupMatches, teamsById]);
 
 const resetAll = async () => {
-    // 1. Safety check
-    if (!window.confirm("Are you sure? This will wipe ALL scores from the database forever.")) {
-      return;
-    }
+  
 
     try {
       // 2. Clear Group Matches in Supabase
@@ -678,7 +675,6 @@ const resetAll = async () => {
       setSf2(emptySeries());
       setFinalGames(emptySeries());
 
-      alert("Database and local scores have been reset.");
     } catch (err) {
       console.error("Reset failed:", err);
       alert("Failed to clear database. Check console for details.");
