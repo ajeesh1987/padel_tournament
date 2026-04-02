@@ -696,7 +696,17 @@ const sf2Winner = sf2w1 >= 2 ? sf2t1 : sf2w2 >= 2 ? sf2t2 : null;
   })
 }
   const updateFinalGame = (idx: number, side: "t1"|"t2", val: string) =>
-    setFinalGames(prev => prev.map((g, i) => i === idx ? { ...g, [side]: val } : g));
+  setFinalGames(prev => {
+    const updated = prev.map((g, i) => i === idx ? { ...g, [side]: val } : g)
+    const g = updated[idx]
+    supabase.from('ko_games').upsert({
+      match_id: 'FINAL',
+      game_number: idx + 1,
+      team1_score: g.t1 === '' ? null : Number(g.t1),
+      team2_score: g.t2 === '' ? null : Number(g.t2),
+    }).then(({ error }) => { if (error) console.error(error) })
+    return updated
+  })
 
   const groupA = groupMatches.filter(m => m.group === "A");
   const groupB = groupMatches.filter(m => m.group === "B");
@@ -827,7 +837,7 @@ setSf1(prev => {
                   onChange={e => {
                     const v = e.target.value.replace(/\D/g, "").slice(0, 2);
 setSf1(prev => {
-  const updated = prev.map((x, i) => i === idx ? { ...x, t1: v } : x)
+  const updated = prev.map((x, i) => i === idx ? { ...x, t2: v } : x)
   const g = updated[idx]
   supabase.from('ko_games').upsert({
     match_id: 'SF1',
@@ -888,10 +898,10 @@ setSf1(prev => {
                   onChange={e => {
                     const v = e.target.value.replace(/\D/g, "").slice(0, 2);
 setSf2(prev => {
-  const updated = prev.map((x, i) => i === idx ? { ...x, t2: v } : x)
+  const updated = prev.map((x, i) => i === idx ? { ...x, t1: v } : x)
   const g = updated[idx]
   supabase.from('ko_games').upsert({
-    match_id: 'SF1',
+    match_id: 'SF2',
     game_number: idx + 1,
     team1_score: g.t1 === '' ? null : Number(g.t1),
     team2_score: g.t2 === '' ? null : Number(g.t2),
@@ -910,7 +920,7 @@ setSf2(prev => {
   const updated = prev.map((x, i) => i === idx ? { ...x, t2: v } : x)
   const g = updated[idx]
   supabase.from('ko_games').upsert({
-    match_id: 'SF1',
+    match_id: 'SF2',
     game_number: idx + 1,
     team1_score: g.t1 === '' ? null : Number(g.t1),
     team2_score: g.t2 === '' ? null : Number(g.t2),
