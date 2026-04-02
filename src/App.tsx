@@ -430,37 +430,25 @@ function AdminGate({ isAdmin, setIsAdmin }: { isAdmin: boolean; setIsAdmin: (v: 
   )
 }
 
-function AdminPanel({
-  isLocked,
-  onToggleLock,
-  onReset,
-  onSignOut,
-}: any) {
+function AdminPanel({ isLocked, onToggleLock, onReset, onSignOut }: any) {
   return (
     <>
       <div className="admin-panel">
         <h3>⚙️ Admin</h3>
-
         <div className="admin-panel-row">
           <span>Score entry</span>
           <span className={isLocked ? 'admin-badge-locked' : 'admin-badge-open'}>
             {isLocked ? '🔒 Locked' : '🔓 Open'}
           </span>
         </div>
-
         <div className="admin-modal-actions" style={{ justifyContent: "flex-start" }}>
           <button onClick={onToggleLock} className="admin-modal-submit">
             {isLocked ? "Unlock scoring" : "Lock scoring"}
           </button>
-          <button onClick={onReset}>
-            Reset scores
-          </button>
+          <button onClick={onReset}>Reset scores</button>
         </div>
       </div>
-
-      <button className="admin-signout" onClick={onSignOut}>
-        sign out of admin
-      </button>
+      <button className="admin-signout" onClick={onSignOut}>sign out of admin</button>
     </>
   );
 }
@@ -499,7 +487,6 @@ const initialGroupMatches: GroupMatch[] = [
   { id:"B4", group:"B", round:2, court:4, team1Id:"T7", team2Id:"T10", team1Games:"", team2Games:"" },
   { id:"B5", group:"B", round:3, court:3, team1Id:"T9", team2Id:"T10", team1Games:"", team2Games:"" },
 ];
-
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 function parseScore(v: string) {
@@ -556,7 +543,6 @@ function MatchRow({ m, teamsById, updateGroup, locked }: {
   );
 }
 
-
 function StandingsCard({ group, data }: { group: string; data: any[] }) {
   return (
     <div className="standings-card">
@@ -587,57 +573,49 @@ function StandingsCard({ group, data }: { group: string; data: any[] }) {
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
 export default function App() {
   const [teams] = useState(initialTeams);
-const [groupMatches, setGroupMatches] = useState(initialGroupMatches);
-
-useEffect(() => {
-  async function loadScores() {
-    // Load group matches
-    const { data: gData, error: gError } = await supabase.from('group_matches').select('*')
-    if (gError) { console.error(gError) }
-    else if (gData?.length) {
-      setGroupMatches(prev => prev.map(m => {
-        const row = gData.find(r => r.id === m.id)
-        if (!row) return m
-        return { ...m, team1Games: row.team1_score?.toString() ?? '', team2Games: row.team2_score?.toString() ?? '' }
-      }))
-    }
-
-    // Load KO games
-    const { data: kData, error: kError } = await supabase.from('ko_games').select('*')
-    if (kError) { console.error(kError) }
-    else if (kData?.length) {
-      const toState = (matchId: string) =>
-        [1, 2, 3].map(n => {
-          const row = kData.find(r => r.match_id === matchId && r.game_number === n)
-          return { t1: row?.team1_score?.toString() ?? '', t2: row?.team2_score?.toString() ?? '' }
-        })
-      setSf1(toState('SF1'))
-      setSf2(toState('SF2'))
-      setFinalGames(toState('FINAL'))
-    }
-  }
-  loadScores()
-}, [])
-
-const [isAdmin, setIsAdmin] = useState(false);
-const [isLocked, setIsLocked] = useState(DEFAULT_LOCKED);
-const [sf1, setSf1] = useState([
-  { t1: "", t2: "" },
-  { t1: "", t2: "" },
-  { t1: "", t2: "" },
-]);
-
-const [sf2, setSf2] = useState([
-  { t1: "", t2: "" },
-  { t1: "", t2: "" },
-  { t1: "", t2: "" },
-]);
+  const [groupMatches, setGroupMatches] = useState(initialGroupMatches);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLocked, setIsLocked] = useState(DEFAULT_LOCKED);
+  const [sf1, setSf1] = useState<GameScore[]>([
+    { t1: "", t2: "" }, { t1: "", t2: "" }, { t1: "", t2: "" },
+  ]);
+  const [sf2, setSf2] = useState<GameScore[]>([
+    { t1: "", t2: "" }, { t1: "", t2: "" }, { t1: "", t2: "" },
+  ]);
   const [finalGames, setFinalGames] = useState<GameScore[]>([
-    { t1:"", t2:"" }, { t1:"", t2:"" }, { t1:"", t2:"" },
+    { t1: "", t2: "" }, { t1: "", t2: "" }, { t1: "", t2: "" },
   ]);
 
-const locked = isLocked && !isAdmin;
+  // ─── LOAD FROM SUPABASE ───────────────────────────────────────────────────
+  useEffect(() => {
+    async function loadScores() {
+      const { data: gData, error: gError } = await supabase.from('group_matches').select('*')
+      if (gError) { console.error(gError) }
+      else if (gData?.length) {
+        setGroupMatches(prev => prev.map(m => {
+          const row = gData.find(r => r.id === m.id)
+          if (!row) return m
+          return { ...m, team1Games: row.team1_score?.toString() ?? '', team2Games: row.team2_score?.toString() ?? '' }
+        }))
+      }
 
+      const { data: kData, error: kError } = await supabase.from('ko_games').select('*')
+      if (kError) { console.error(kError) }
+      else if (kData?.length) {
+        const toState = (matchId: string): GameScore[] =>
+          [1, 2, 3].map(n => {
+            const row = kData.find(r => r.match_id === matchId && r.game_number === n)
+            return { t1: row?.team1_score?.toString() ?? '', t2: row?.team2_score?.toString() ?? '' }
+          })
+        setSf1(toState('SF1'))
+        setSf2(toState('SF2'))
+        setFinalGames(toState('FINAL'))
+      }
+    }
+    loadScores()
+  }, [])
+
+  const locked = isLocked && !isAdmin;
   const teamsById = Object.fromEntries(teams.map(t => [t.id, t])) as Record<string, Team>;
 
   const standings = useMemo(() => {
@@ -664,25 +642,25 @@ const locked = isLocked && !isAdmin;
     B.sort((a,b) => b.points-a.points || b.gameDiff-a.gameDiff);
     return { A, B };
   }, [groupMatches, teamsById]);
-const resetAll = () => {
-  setGroupMatches(initialGroupMatches);
-};
-  const anyAPlayed = groupMatches.filter(m => m.group === "A").some(m => m.team1Games !== '' && m.team2Games !== '')
-const anyBPlayed = groupMatches.filter(m => m.group === "B").some(m => m.team1Games !== '' && m.team2Games !== '')
 
-const q = {
-  a1: anyAPlayed ? standings.A[0]?.teamId ?? null : null,
-  a2: anyAPlayed ? standings.A[1]?.teamId ?? null : null,
-  b1: anyBPlayed ? standings.B[0]?.teamId ?? null : null,
-  b2: anyBPlayed ? standings.B[1]?.teamId ?? null : null,
-};
+  const resetAll = () => { setGroupMatches(initialGroupMatches); };
+
+  const anyAPlayed = groupMatches.filter(m => m.group === "A").some(m => m.team1Games !== '' && m.team2Games !== '')
+  const anyBPlayed = groupMatches.filter(m => m.group === "B").some(m => m.team1Games !== '' && m.team2Games !== '')
+
+  const q = {
+    a1: anyAPlayed ? standings.A[0]?.teamId ?? null : null,
+    a2: anyAPlayed ? standings.A[1]?.teamId ?? null : null,
+    b1: anyBPlayed ? standings.B[0]?.teamId ?? null : null,
+    b2: anyBPlayed ? standings.B[1]?.teamId ?? null : null,
+  };
+
   const sf1t1 = q.a1, sf1t2 = q.b2;
   const sf2t1 = q.b1, sf2t2 = q.a2;
- const [sf1w1, sf1w2] = countWins(sf1);
-const [sf2w1, sf2w2] = countWins(sf2);
-
-const sf1Winner = sf1w1 >= 2 ? sf1t1 : sf1w2 >= 2 ? sf1t2 : null;
-const sf2Winner = sf2w1 >= 2 ? sf2t1 : sf2w2 >= 2 ? sf2t2 : null;
+  const [sf1w1, sf1w2] = countWins(sf1);
+  const [sf2w1, sf2w2] = countWins(sf2);
+  const sf1Winner = sf1w1 >= 2 ? sf1t1 : sf1w2 >= 2 ? sf1t2 : null;
+  const sf2Winner = sf2w1 >= 2 ? sf2t1 : sf2w2 >= 2 ? sf2t2 : null;
   const finalT1 = sf1Winner, finalT2 = sf2Winner;
   const [fw1, fw2] = countWins(finalGames);
   const finalOver = fw1 >= 2 || fw2 >= 2;
@@ -694,38 +672,36 @@ const sf2Winner = sf2w1 >= 2 ? sf2t1 : sf2w2 >= 2 ? sf2t2 : null;
   const finalGame1w2 = game1Won && getWinner(finalT1, finalT2, finalGames[0].t1, finalGames[0].t2) === finalT2;
   const finalGame2w1 = game2Won && getWinner(finalT1, finalT2, finalGames[1].t1, finalGames[1].t2) === finalT1;
   const finalNeedsGame3 = game1Won && game2Won && ((finalGame1w1 && finalGame2w2) || (finalGame1w2 && finalGame2w1));
-  const gameEnabled = [
-    !!finalT1 && !!finalT2,
-    game1Won,
-    finalNeedsGame3,
-  ];
+  const gameEnabled = [!!finalT1 && !!finalT2, game1Won, finalNeedsGame3];
 
- const updateGroup = (id: string, field: string, val: string) => {
-  setGroupMatches(prev => {
-    const updated = prev.map(m => m.id === id ? { ...m, [field]: val } : m)
-    const match = updated.find(m => m.id === id)!
-    supabase.from('group_matches').upsert({
-      id,
-      team1_score: match.team1Games === '' ? null : Number(match.team1Games),
-      team2_score: match.team2Games === '' ? null : Number(match.team2Games),
-    }).then(({ error }) => { if (error) console.error(error) })
-    return updated
-  })
-}
-  const updateFinalGame = (idx: number, side: "t1"|"t2", val: string) =>
-  setFinalGames(prev => {
-    const updated = prev.map((g, i) => i === idx ? { ...g, [side]: val } : g)
-    const g = updated[idx]
-    supabase.from('ko_games').upsert({
-      match_id: 'FINAL',
-      game_number: idx + 1,
-      team1_score: g.t1 === '' ? null : Number(g.t1),
-      team2_score: g.t2 === '' ? null : Number(g.t2),
-  }, { onConflict: 'match_id,game_number' }).then(({ error }) => { if (error) console.error(error) })
-    return updated
-  })
+  const updateGroup = (id: string, field: string, val: string) => {
+    setGroupMatches(prev => {
+      const updated = prev.map(m => m.id === id ? { ...m, [field]: val } : m)
+      const match = updated.find(m => m.id === id)!
+      supabase.from('group_matches').upsert({
+        id,
+        team1_score: match.team1Games === '' ? null : Number(match.team1Games),
+        team2_score: match.team2Games === '' ? null : Number(match.team2Games),
+      }).then(({ error }) => { if (error) console.error(error) })
+      return updated
+    })
+  }
 
-const groupA = groupMatches.filter(m => m.group === "A");
+  const updateFinalGame = (idx: number, side: "t1"|"t2", val: string) => {
+    setFinalGames(prev => {
+      const updated = prev.map((g, i) => i === idx ? { ...g, [side]: val } : g)
+      const g = updated[idx]
+      supabase.from('ko_games').upsert({
+        match_id: 'FINAL',
+        game_number: idx + 1,
+        team1_score: g.t1 === '' ? null : Number(g.t1),
+        team2_score: g.t2 === '' ? null : Number(g.t2),
+      }, { onConflict: 'match_id,game_number' }).then(({ error }) => { if (error) console.error(error) })
+      return updated
+    })
+  }
+
+  const groupA = groupMatches.filter(m => m.group === "A");
   const groupB = groupMatches.filter(m => m.group === "B");
   const t1name = finalT1 ? teamsById[finalT1]?.name : null;
   const t2name = finalT2 ? teamsById[finalT2]?.name : null;
@@ -738,37 +714,34 @@ const groupA = groupMatches.filter(m => m.group === "A");
         <div className="container">
 
           {isAdmin && <AdminPanel
-  isLocked={isLocked}
-  onToggleLock={() => setIsLocked(p => !p)}
-  onReset={resetAll}
-  onSignOut={() => setIsAdmin(false)}
-/>}
-<div className="header">
-  <div>
-    <div className="header-eyebrow">Padel Tournament</div>
-    <div className="header-title">
-      Convert &amp; Create<br />
-      <span>Impact</span>
-    </div>
-  </div>
+            isLocked={isLocked}
+            onToggleLock={() => setIsLocked(p => !p)}
+            onReset={resetAll}
+            onSignOut={() => setIsAdmin(false)}
+          />}
 
-  <div className="header-pills">
-    <span className="pill"><strong>10</strong> Teams</span>
-    <span className="pill"><strong>4</strong> Courts</span>
-    <span className="pill"><strong>10 min</strong> Matches</span>
-    <span className="pill"><strong>Best of 3</strong> Final</span>
-
-    <a
-      href="https://raw.githubusercontent.com/ajeesh1987/padel_tournament/refs/heads/main/README.md"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="pill"
-      style={{ textDecoration: "none" }}
-    >
-      🎲 View Draw guidelines
-    </a>
-  </div>
-</div>
+          <div className="header">
+            <div>
+              <div className="header-eyebrow">Padel Tournament</div>
+              <div className="header-title">
+                Convert &amp; Create<br />
+                <span>Impact</span>
+              </div>
+            </div>
+            <div className="header-pills">
+              <span className="pill"><strong>10</strong> Teams</span>
+              <span className="pill"><strong>4</strong> Courts</span>
+              <span className="pill"><strong>10 min</strong> Matches</span>
+              <span className="pill"><strong>Best of 3</strong> Final</span>
+              <a
+                href="https://raw.githubusercontent.com/ajeesh1987/padel_tournament/refs/heads/main/README.md"
+                target="_blank" rel="noopener noreferrer"
+                className="pill" style={{ textDecoration: "none" }}
+              >
+                🎲 View Draw guidelines
+              </a>
+            </div>
+          </div>
 
           <div className="section">
             <div className="section-title"><div className="section-title-bar" />Group Matches (10 min time limit. Each player gets 2 serves. The team with the most points at the end wins)</div>
@@ -783,185 +756,156 @@ const groupA = groupMatches.filter(m => m.group === "A");
             <StandingsCard group="B" data={standings.B} />
           </div>
 
-<div className="section">
-  <div className="section-title">
-    <div className="section-title-bar" />
-    Semi Finals (Americano · 21 points)
-  </div>
-
-  <div className="final-meta" style={{ marginBottom: 12 }}>
-    <span className="final-badge">Best of 3</span>
-    <span className="final-duration">first to win 2 games</span>
-  </div>
-
-  <div className="ko-grid">
-
-    {/* SF1 */}
-    <div className="ko-card">
-      <div className="ko-card-label">Semi Final 1 · A1 vs B2</div>
-
-      {sf1.map((g, idx) => {
-        const game1Won = !!getWinner(sf1t1, sf1t2, sf1[0].t1, sf1[0].t2);
-        const game2Won = !!getWinner(sf1t1, sf1t2, sf1[1].t1, sf1[1].t2);
-        const game1w1 = game1Won && getWinner(sf1t1, sf1t2, sf1[0].t1, sf1[0].t2) === sf1t1;
-        const game2w2 = game2Won && getWinner(sf1t1, sf1t2, sf1[1].t1, sf1[1].t2) === sf1t2;
-        const game1w2 = game1Won && getWinner(sf1t1, sf1t2, sf1[0].t1, sf1[0].t2) === sf1t2;
-        const game2w1 = game2Won && getWinner(sf1t1, sf1t2, sf1[1].t1, sf1[1].t2) === sf1t1;
-        const needsGame3 = game1Won && game2Won && ((game1w1 && game2w2) || (game1w2 && game2w1));
-
-        const enabled =
-          idx === 0 ||
-          (idx === 1 && game1Won) ||
-          (idx === 2 && needsGame3);
-
-        const winner = getWinner(sf1t1, sf1t2, g.t1, g.t2);
-
-        return (
-          <div key={idx} style={{ marginBottom: 10, opacity: enabled ? 1 : 0.4 }}>
-            <div style={{ fontSize: 11, marginBottom: 4 }}>
-              Game {idx + 1}
+          <div className="section">
+            <div className="section-title">
+              <div className="section-title-bar" />
+              Semi Finals (Americano · 21 points)
+            </div>
+            <div className="final-meta" style={{ marginBottom: 12 }}>
+              <span className="final-badge">Best of 3</span>
+              <span className="final-duration">first to win 2 games</span>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 8, alignItems: "center" }}>
-              <div style={{ fontSize: 13, fontWeight: winner === sf1t1 ? 600 : 400 }}>
-                {sf1t1 ? teamsById[sf1t1]?.name : "TBD"}
+            <div className="ko-grid">
+
+              {/* SF1 */}
+              <div className="ko-card">
+                <div className="ko-card-label">Semi Final 1 · A1 vs B2</div>
+                {sf1.map((g, idx) => {
+                  const game1Won = !!getWinner(sf1t1, sf1t2, sf1[0].t1, sf1[0].t2);
+                  const game2Won = !!getWinner(sf1t1, sf1t2, sf1[1].t1, sf1[1].t2);
+                  const game1w1 = game1Won && getWinner(sf1t1, sf1t2, sf1[0].t1, sf1[0].t2) === sf1t1;
+                  const game2w2 = game2Won && getWinner(sf1t1, sf1t2, sf1[1].t1, sf1[1].t2) === sf1t2;
+                  const game1w2 = game1Won && getWinner(sf1t1, sf1t2, sf1[0].t1, sf1[0].t2) === sf1t2;
+                  const game2w1 = game2Won && getWinner(sf1t1, sf1t2, sf1[1].t1, sf1[1].t2) === sf1t1;
+                  const needsGame3 = game1Won && game2Won && ((game1w1 && game2w2) || (game1w2 && game2w1));
+                  const enabled = idx === 0 || (idx === 1 && game1Won) || (idx === 2 && needsGame3);
+                  const winner = getWinner(sf1t1, sf1t2, g.t1, g.t2);
+                  return (
+                    <div key={idx} style={{ marginBottom: 10, opacity: enabled ? 1 : 0.4 }}>
+                      <div style={{ fontSize: 11, marginBottom: 4 }}>Game {idx + 1}</div>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 8, alignItems: "center" }}>
+                        <div style={{ fontSize: 13, fontWeight: winner === sf1t1 ? 600 : 400 }}>
+                          {sf1t1 ? teamsById[sf1t1]?.name : "TBD"}
+                        </div>
+                        <div style={{ display: "flex", gap: 6 }}>
+                          <input
+                            className="game-score-input"
+                            value={g.t1}
+                            disabled={!enabled || locked}
+                            onChange={e => {
+                              const v = e.target.value.replace(/\D/g, "").slice(0, 2);
+                              setSf1(prev => {
+                                const updated = prev.map((x, i) => i === idx ? { ...x, t1: v } : x)
+                                const g = updated[idx]
+                                supabase.from('ko_games').upsert({
+                                  match_id: 'SF1', game_number: idx + 1,
+                                  team1_score: g.t1 === '' ? null : Number(g.t1),
+                                  team2_score: g.t2 === '' ? null : Number(g.t2),
+                                }, { onConflict: 'match_id,game_number' }).then(({ error }) => { if (error) console.error(error) })
+                                return updated
+                              })
+                            }}
+                          />
+                          <span>VS</span>
+                          <input
+                            className="game-score-input"
+                            value={g.t2}
+                            disabled={!enabled || locked}
+                            onChange={e => {
+                              const v = e.target.value.replace(/\D/g, "").slice(0, 2);
+                              setSf1(prev => {
+                                const updated = prev.map((x, i) => i === idx ? { ...x, t2: v } : x)
+                                const g = updated[idx]
+                                supabase.from('ko_games').upsert({
+                                  match_id: 'SF1', game_number: idx + 1,
+                                  team1_score: g.t1 === '' ? null : Number(g.t1),
+                                  team2_score: g.t2 === '' ? null : Number(g.t2),
+                                }, { onConflict: 'match_id,game_number' }).then(({ error }) => { if (error) console.error(error) })
+                                return updated
+                              })
+                            }}
+                          />
+                        </div>
+                        <div style={{ textAlign: "right", fontSize: 13, fontWeight: winner === sf1t2 ? 600 : 400 }}>
+                          {sf1t2 ? teamsById[sf1t2]?.name : "TBD"}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
-              <div style={{ display: "flex", gap: 6 }}>
-                <input
-                  className="game-score-input"
-                  value={g.t1}
-                  disabled={!enabled || locked}
-                  onChange={e => {
-                    const v = e.target.value.replace(/\D/g, "").slice(0, 2);
-setSf1(prev => {
-  const updated = prev.map((x, i) => i === idx ? { ...x, t1: v } : x)
-  const g = updated[idx]
-  supabase.from('ko_games').upsert({
-    match_id: 'SF1',
-    game_number: idx + 1,
-    team1_score: g.t1 === '' ? null : Number(g.t1),
-    team2_score: g.t2 === '' ? null : Number(g.t2),
-   }, { onConflict: 'match_id,game_number' }).then(({ error }) => { if (error) console.error(error) })
-  return updated
-})                  }}
-                />
-                <span>VS</span>
-                <input
-                  className="game-score-input"
-                  value={g.t2}
-                  disabled={!enabled || locked}
-                  onChange={e => {
-                    const v = e.target.value.replace(/\D/g, "").slice(0, 2);
-setSf1(prev => {
-  const updated = prev.map((x, i) => i === idx ? { ...x, t2: v } : x)
-  const g = updated[idx]
-  supabase.from('ko_games').upsert({
-    match_id: 'SF1',
-    game_number: idx + 1,
-    team1_score: g.t1 === '' ? null : Number(g.t1),
-    team2_score: g.t2 === '' ? null : Number(g.t2),
-       }, { onConflict: 'match_id,game_number' }).then(({ error }) => { if (error) console.error(error) })
-  return updated
-})                  }}
-                />
-                <span>VS</span>
-                <input
-                  className="game-score-input"
-                  value={g.t2}
-                  disabled={!enabled || locked}
-                {sf1t2 ? teamsById[sf1t2]?.name : "TBD"}
-              </div>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-
-    {/* SF2 */}
-    <div className="ko-card">
-      <div className="ko-card-label">Semi Final 2 · B1 vs A2</div>
-
-      {sf2.map((g, idx) => {
-        const game1Won = !!getWinner(sf2t1, sf2t2, sf2[0].t1, sf2[0].t2);
-        const game2Won = !!getWinner(sf2t1, sf2t2, sf2[1].t1, sf2[1].t2);
-        const game1w1 = game1Won && getWinner(sf2t1, sf2t2, sf2[0].t1, sf2[0].t2) === sf2t1;
-        const game2w2 = game2Won && getWinner(sf2t1, sf2t2, sf2[1].t1, sf2[1].t2) === sf2t2;
-        const game1w2 = game1Won && getWinner(sf2t1, sf2t2, sf2[0].t1, sf2[0].t2) === sf2t2;
-        const game2w1 = game2Won && getWinner(sf2t1, sf2t2, sf2[1].t1, sf2[1].t2) === sf2t1;
-        const needsGame3 = game1Won && game2Won && ((game1w1 && game2w2) || (game1w2 && game2w1));
-
-        const enabled =
-          idx === 0 ||
-          (idx === 1 && game1Won) ||
-          (idx === 2 && needsGame3);
-
-        const winner = getWinner(sf2t1, sf2t2, g.t1, g.t2);
-
-        return (
-          <div key={idx} style={{ marginBottom: 10, opacity: enabled ? 1 : 0.4 }}>
-            <div style={{ fontSize: 11, marginBottom: 4 }}>
-              Game {idx + 1}
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 8, alignItems: "center" }}>
-              <div style={{ fontSize: 13, fontWeight: winner === sf2t1 ? 600 : 400 }}>
-                {sf2t1 ? teamsById[sf2t1]?.name : "TBD"}
+              {/* SF2 */}
+              <div className="ko-card">
+                <div className="ko-card-label">Semi Final 2 · B1 vs A2</div>
+                {sf2.map((g, idx) => {
+                  const game1Won = !!getWinner(sf2t1, sf2t2, sf2[0].t1, sf2[0].t2);
+                  const game2Won = !!getWinner(sf2t1, sf2t2, sf2[1].t1, sf2[1].t2);
+                  const game1w1 = game1Won && getWinner(sf2t1, sf2t2, sf2[0].t1, sf2[0].t2) === sf2t1;
+                  const game2w2 = game2Won && getWinner(sf2t1, sf2t2, sf2[1].t1, sf2[1].t2) === sf2t2;
+                  const game1w2 = game1Won && getWinner(sf2t1, sf2t2, sf2[0].t1, sf2[0].t2) === sf2t2;
+                  const game2w1 = game2Won && getWinner(sf2t1, sf2t2, sf2[1].t1, sf2[1].t2) === sf2t1;
+                  const needsGame3 = game1Won && game2Won && ((game1w1 && game2w2) || (game1w2 && game2w1));
+                  const enabled = idx === 0 || (idx === 1 && game1Won) || (idx === 2 && needsGame3);
+                  const winner = getWinner(sf2t1, sf2t2, g.t1, g.t2);
+                  return (
+                    <div key={idx} style={{ marginBottom: 10, opacity: enabled ? 1 : 0.4 }}>
+                      <div style={{ fontSize: 11, marginBottom: 4 }}>Game {idx + 1}</div>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 8, alignItems: "center" }}>
+                        <div style={{ fontSize: 13, fontWeight: winner === sf2t1 ? 600 : 400 }}>
+                          {sf2t1 ? teamsById[sf2t1]?.name : "TBD"}
+                        </div>
+                        <div style={{ display: "flex", gap: 6 }}>
+                          <input
+                            className="game-score-input"
+                            value={g.t1}
+                            disabled={!enabled || locked}
+                            onChange={e => {
+                              const v = e.target.value.replace(/\D/g, "").slice(0, 2);
+                              setSf2(prev => {
+                                const updated = prev.map((x, i) => i === idx ? { ...x, t1: v } : x)
+                                const g = updated[idx]
+                                supabase.from('ko_games').upsert({
+                                  match_id: 'SF2', game_number: idx + 1,
+                                  team1_score: g.t1 === '' ? null : Number(g.t1),
+                                  team2_score: g.t2 === '' ? null : Number(g.t2),
+                                }, { onConflict: 'match_id,game_number' }).then(({ error }) => { if (error) console.error(error) })
+                                return updated
+                              })
+                            }}
+                          />
+                          <span>VS</span>
+                          <input
+                            className="game-score-input"
+                            value={g.t2}
+                            disabled={!enabled || locked}
+                            onChange={e => {
+                              const v = e.target.value.replace(/\D/g, "").slice(0, 2);
+                              setSf2(prev => {
+                                const updated = prev.map((x, i) => i === idx ? { ...x, t2: v } : x)
+                                const g = updated[idx]
+                                supabase.from('ko_games').upsert({
+                                  match_id: 'SF2', game_number: idx + 1,
+                                  team1_score: g.t1 === '' ? null : Number(g.t1),
+                                  team2_score: g.t2 === '' ? null : Number(g.t2),
+                                }, { onConflict: 'match_id,game_number' }).then(({ error }) => { if (error) console.error(error) })
+                                return updated
+                              })
+                            }}
+                          />
+                        </div>
+                        <div style={{ textAlign: "right", fontSize: 13, fontWeight: winner === sf2t2 ? 600 : 400 }}>
+                          {sf2t2 ? teamsById[sf2t2]?.name : "TBD"}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
-              <div style={{ display: "flex", gap: 6 }}>
-                <input
-                  className="game-score-input"
-                  value={g.t1}
-                  disabled={!enabled || locked}
-                  onChange={e => {
-                    const v = e.target.value.replace(/\D/g, "").slice(0, 2);
-setSf2(prev => {
-  const updated = prev.map((x, i) => i === idx ? { ...x, t1: v } : x)
-  const g = updated[idx]
-  supabase.from('ko_games').upsert({
-    match_id: 'SF2',
-    game_number: idx + 1,
-    team1_score: g.t1 === '' ? null : Number(g.t1),
-    team2_score: g.t2 === '' ? null : Number(g.t2),
-   }, { onConflict: 'match_id,game_number' }).then(({ error }) => { if (error) console.error(error) })
-  return updated
-})                  }}
-                />
-                <span>VS</span>
-                <input
-                  className="game-score-input"
-                  value={g.t2}
-                  disabled={!enabled || locked}
-                  onChange={e => {
-                    const v = e.target.value.replace(/\D/g, "").slice(0, 2);
-setSf2(prev => {
-  const updated = prev.map((x, i) => i === idx ? { ...x, t2: v } : x)
-  const g = updated[idx]
-  supabase.from('ko_games').upsert({
-    match_id: 'SF2',
-    game_number: idx + 1,
-    team1_score: g.t1 === '' ? null : Number(g.t1),
-    team2_score: g.t2 === '' ? null : Number(g.t2),
-      }, { onConflict: 'match_id,game_number' }).then(({ error }) => { if (error) console.error(error) })
-  return updated
-})                  }}
-                />
-              </div>
-
-              <div style={{ textAlign: "right", fontSize: 13, fontWeight: winner === sf1t2 ? 600 : 400 }}>
-                {sf2t2 ? teamsById[sf2t2]?.name : "TBD"}
-              </div>
             </div>
           </div>
-        );
-      })}
-    </div>
-
-  </div>
-</div>
-
-
 
           <div className="final-card">
             <div className="final-header">
