@@ -591,18 +591,30 @@ const [groupMatches, setGroupMatches] = useState(initialGroupMatches);
 
 useEffect(() => {
   async function loadScores() {
-    const { data, error } = await supabase.from('group_matches').select('*')
-    if (error) { console.error(error); return; }
-    if (!data?.length) return;
-    setGroupMatches(prev => prev.map(m => {
-      const row = data.find(r => r.id === m.id)
-      if (!row) return m
-      return {
-        ...m,
-        team1Games: row.team1_score?.toString() ?? '',
-        team2Games: row.team2_score?.toString() ?? '',
-      }
-    }))
+    // Load group matches
+    const { data: gData, error: gError } = await supabase.from('group_matches').select('*')
+    if (gError) { console.error(gError) }
+    else if (gData?.length) {
+      setGroupMatches(prev => prev.map(m => {
+        const row = gData.find(r => r.id === m.id)
+        if (!row) return m
+        return { ...m, team1Games: row.team1_score?.toString() ?? '', team2Games: row.team2_score?.toString() ?? '' }
+      }))
+    }
+
+    // Load KO games
+    const { data: kData, error: kError } = await supabase.from('ko_games').select('*')
+    if (kError) { console.error(kError) }
+    else if (kData?.length) {
+      const toState = (matchId: string) =>
+        [1, 2, 3].map(n => {
+          const row = kData.find(r => r.match_id === matchId && r.game_number === n)
+          return { t1: row?.team1_score?.toString() ?? '', t2: row?.team2_score?.toString() ?? '' }
+        })
+      setSf1(toState('SF1'))
+      setSf2(toState('SF2'))
+      setFinalGames(toState('FINAL'))
+    }
   }
   loadScores()
 }, [])
