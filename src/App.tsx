@@ -680,15 +680,18 @@ const resetAll = async () => {
       alert("Failed to clear database. Check console for details.");
     }
   };
-  const anyAPlayed = groupMatches.filter(m => m.group === "A").some(m => m.team1Games !== '' && m.team2Games !== '')
-  const anyBPlayed = groupMatches.filter(m => m.group === "B").some(m => m.team1Games !== '' && m.team2Games !== '')
+// Check if ALL matches in the groups are finished
+const groupADone = groupMatches.filter(m => m.group === "A").every(m => m.team1Games !== '' && m.team2Games !== '');
+const groupBDone = groupMatches.filter(m => m.group === "B").every(m => m.team1Games !== '' && m.team2Games !== '');
+const allGroupsDone = groupADone && groupBDone;
 
-  const q = {
-    a1: anyAPlayed ? standings.A[0]?.teamId ?? null : null,
-    a2: anyAPlayed ? standings.A[1]?.teamId ?? null : null,
-    b1: anyBPlayed ? standings.B[0]?.teamId ?? null : null,
-    b2: anyBPlayed ? standings.B[1]?.teamId ?? null : null,
-  };
+const q = {
+  // Only provide team IDs if the groups are actually finished
+  a1: groupADone ? standings.A[0]?.teamId ?? null : null,
+  a2: groupADone ? standings.A[1]?.teamId ?? null : null,
+  b1: groupBDone ? standings.B[0]?.teamId ?? null : null,
+  b2: groupBDone ? standings.B[1]?.teamId ?? null : null,
+};
 
   const sf1t1 = q.a1, sf1t2 = q.b2;
   const sf2t1 = q.b1, sf2t2 = q.a2;
@@ -813,8 +816,8 @@ const resetAll = async () => {
                   const game2w2 = game2Won && getWinner(sf1t1, sf1t2, sf1[1].t1, sf1[1].t2) === sf1t2;
                   const game1w2 = game1Won && getWinner(sf1t1, sf1t2, sf1[0].t1, sf1[0].t2) === sf1t2;
                   const game2w1 = game2Won && getWinner(sf1t1, sf1t2, sf1[1].t1, sf1[1].t2) === sf1t1;
-                  const needsGame3 = game1Won && game2Won && ((game1w1 && game2w2) || (game1w2 && game2w1));
-                  const enabled = idx === 0 || (idx === 1 && game1Won) || (idx === 2 && needsGame3);
+                 const needsGame3 = game1Won && game2Won && ((game1w1 && game2w2) || (game1w2 && game2w1));
+                  const enabled = allGroupsDone && (idx === 0 || (idx === 1 && game1Won) || (idx === 2 && needsGame3));
                   const winner = getWinner(sf1t1, sf1t2, g.t1, g.t2);
                   return (
                     <div key={idx} style={{ marginBottom: 10, opacity: enabled ? 1 : 0.4 }}>
@@ -882,7 +885,7 @@ const resetAll = async () => {
                   const game1w2 = game1Won && getWinner(sf2t1, sf2t2, sf2[0].t1, sf2[0].t2) === sf2t2;
                   const game2w1 = game2Won && getWinner(sf2t1, sf2t2, sf2[1].t1, sf2[1].t2) === sf2t1;
                   const needsGame3 = game1Won && game2Won && ((game1w1 && game2w2) || (game1w2 && game2w1));
-                  const enabled = idx === 0 || (idx === 1 && game1Won) || (idx === 2 && needsGame3);
+                  const enabled = allGroupsDone && (idx === 0 || (idx === 1 && game1Won) || (idx === 2 && needsGame3));
                   const winner = getWinner(sf2t1, sf2t2, g.t1, g.t2);
                   return (
                     <div key={idx} style={{ marginBottom: 10, opacity: enabled ? 1 : 0.4 }}>
