@@ -808,7 +808,7 @@ const q = {
 
               {/* SF1 */}
               <div className="ko-card">
-                <div className="ko-card-label">Semi Final 1 · A1 vs B2</div>
+                <div className="ko-card-label">Semi Final 1 · A1 vs B2 Court 1</div>
                 {sf1.map((g, idx) => {
                   const game1Won = !!getWinner(sf1t1, sf1t2, sf1[0].t1, sf1[0].t2);
                   const game2Won = !!getWinner(sf1t1, sf1t2, sf1[1].t1, sf1[1].t2);
@@ -876,7 +876,7 @@ const q = {
 
               {/* SF2 */}
               <div className="ko-card">
-                <div className="ko-card-label">Semi Final 2 · B1 vs A2</div>
+                <div className="ko-card-label">Semi Final 2 · B1 vs A2 Court 2</div>
                 {sf2.map((g, idx) => {
                   const game1Won = !!getWinner(sf2t1, sf2t2, sf2[0].t1, sf2[0].t2);
                   const game2Won = !!getWinner(sf2t1, sf2t2, sf2[1].t1, sf2[1].t2);
@@ -947,7 +947,7 @@ const q = {
 
           <div className="final-card">
             <div className="final-header">
-              <div className="final-title">Final (Americano - 21 points)</div>
+              <div className="final-title">Final . Court 1 (Americano - 21 points)</div>
               <div className="final-meta">
                 <span className="final-badge">Best of 3</span>
                 <span className="final-duration">first to win 2 games</span>
