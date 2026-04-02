@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
-import { supabase } from './supabaseClient';
+import { supabase } from './supabaseClient'
 
 // ─── CONFIG ────────────────────────────────────────────────────────────────
 const GAMES_START = new Date('2026-04-15T17:00:00+02:00')
