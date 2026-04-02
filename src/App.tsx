@@ -842,8 +842,7 @@ setSf1(prev => {
     game_number: idx + 1,
     team1_score: g.t1 === '' ? null : Number(g.t1),
     team2_score: g.t2 === '' ? null : Number(g.t2),
-    }, { onConflict: 'match_id,game_number' })
-  }).then(({ error }) => { if (error) console.error(error) })
+   }, { onConflict: 'match_id,game_number' }).then(({ error }) => { if (error) console.error(error) })
   return updated
 })                  }}
                 />
@@ -862,14 +861,15 @@ setSf1(prev => {
     game_number: idx + 1,
     team1_score: g.t1 === '' ? null : Number(g.t1),
     team2_score: g.t2 === '' ? null : Number(g.t2),
-        }, { onConflict: 'match_id,game_number' })
-  }).then(({ error }) => { if (error) console.error(error) })
+       }, { onConflict: 'match_id,game_number' }).then(({ error }) => { if (error) console.error(error) })
   return updated
 })                  }}
                 />
-              </div>
-
-              <div style={{ textAlign: "right", fontSize: 13, fontWeight: winner === sf1t2 ? 600 : 400 }}>
+                <span>VS</span>
+                <input
+                  className="game-score-input"
+                  value={g.t2}
+                  disabled={!enabled || locked}
                 {sf1t2 ? teamsById[sf1t2]?.name : "TBD"}
               </div>
             </div>
@@ -924,9 +924,7 @@ setSf2(prev => {
     game_number: idx + 1,
     team1_score: g.t1 === '' ? null : Number(g.t1),
     team2_score: g.t2 === '' ? null : Number(g.t2),
-        }, { onConflict: 'match_id,game_number' })
-
-  }).then(({ error }) => { if (error) console.error(error) })
+   }, { onConflict: 'match_id,game_number' }).then(({ error }) => { if (error) console.error(error) })
   return updated
 })                  }}
                 />
@@ -945,15 +943,13 @@ setSf2(prev => {
     game_number: idx + 1,
     team1_score: g.t1 === '' ? null : Number(g.t1),
     team2_score: g.t2 === '' ? null : Number(g.t2),
-        }, { onConflict: 'match_id,game_number' })
-
-  }).then(({ error }) => { if (error) console.error(error) })
+      }, { onConflict: 'match_id,game_number' }).then(({ error }) => { if (error) console.error(error) })
   return updated
 })                  }}
                 />
               </div>
 
-              <div style={{ textAlign: "right", fontSize: 13, fontWeight: winner === sf2t2 ? 600 : 400 }}>
+              <div style={{ textAlign: "right", fontSize: 13, fontWeight: winner === sf1t2 ? 600 : 400 }}>
                 {sf2t2 ? teamsById[sf2t2]?.name : "TBD"}
               </div>
             </div>
