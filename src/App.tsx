@@ -605,7 +605,9 @@ useEffect(() => {
     }))
   }
   loadScores()
-}, [])  const [isAdmin, setIsAdmin] = useState(false);
+}, [])
+
+const [isAdmin, setIsAdmin] = useState(false);
 const [isLocked, setIsLocked] = useState(DEFAULT_LOCKED);
 const [sf1, setSf1] = useState([
   { t1: "", t2: "" },
