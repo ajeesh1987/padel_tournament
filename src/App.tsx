@@ -683,8 +683,18 @@ const sf2Winner = sf2w1 >= 2 ? sf2t1 : sf2w2 >= 2 ? sf2t2 : null;
     finalNeedsGame3,
   ];
 
-  const updateGroup = (id: string, field: string, val: string) =>
-    setGroupMatches(prev => prev.map(m => m.id === id ? { ...m, [field]: val } : m));
+ const updateGroup = (id: string, field: string, val: string) => {
+  setGroupMatches(prev => {
+    const updated = prev.map(m => m.id === id ? { ...m, [field]: val } : m)
+    const match = updated.find(m => m.id === id)!
+    supabase.from('group_matches').upsert({
+      id,
+      team1_score: match.team1Games === '' ? null : Number(match.team1Games),
+      team2_score: match.team2Games === '' ? null : Number(match.team2Games),
+    }).then(({ error }) => { if (error) console.error(error) })
+    return updated
+  })
+}
   const updateFinalGame = (idx: number, side: "t1"|"t2", val: string) =>
     setFinalGames(prev => prev.map((g, i) => i === idx ? { ...g, [side]: val } : g));
 
@@ -797,8 +807,17 @@ const sf2Winner = sf2w1 >= 2 ? sf2t1 : sf2w2 >= 2 ? sf2t2 : null;
                   disabled={!enabled || locked}
                   onChange={e => {
                     const v = e.target.value.replace(/\D/g, "").slice(0, 2);
-                    setSf1(prev => prev.map((x, i) => i === idx ? { ...x, t1: v } : x));
-                  }}
+setSf1(prev => {
+  const updated = prev.map((x, i) => i === idx ? { ...x, t1: v } : x)
+  const g = updated[idx]
+  supabase.from('ko_games').upsert({
+    match_id: 'SF1',
+    game_number: idx + 1,
+    team1_score: g.t1 === '' ? null : Number(g.t1),
+    team2_score: g.t2 === '' ? null : Number(g.t2),
+  }).then(({ error }) => { if (error) console.error(error) })
+  return updated
+})                  }}
                 />
                 <span>VS</span>
                 <input
@@ -807,8 +826,17 @@ const sf2Winner = sf2w1 >= 2 ? sf2t1 : sf2w2 >= 2 ? sf2t2 : null;
                   disabled={!enabled || locked}
                   onChange={e => {
                     const v = e.target.value.replace(/\D/g, "").slice(0, 2);
-                    setSf1(prev => prev.map((x, i) => i === idx ? { ...x, t2: v } : x));
-                  }}
+setSf1(prev => {
+  const updated = prev.map((x, i) => i === idx ? { ...x, t1: v } : x)
+  const g = updated[idx]
+  supabase.from('ko_games').upsert({
+    match_id: 'SF1',
+    game_number: idx + 1,
+    team1_score: g.t1 === '' ? null : Number(g.t1),
+    team2_score: g.t2 === '' ? null : Number(g.t2),
+  }).then(({ error }) => { if (error) console.error(error) })
+  return updated
+})                  }}
                 />
               </div>
 
@@ -859,8 +887,17 @@ const sf2Winner = sf2w1 >= 2 ? sf2t1 : sf2w2 >= 2 ? sf2t2 : null;
                   disabled={!enabled || locked}
                   onChange={e => {
                     const v = e.target.value.replace(/\D/g, "").slice(0, 2);
-                    setSf2(prev => prev.map((x, i) => i === idx ? { ...x, t1: v } : x));
-                  }}
+setSf2(prev => {
+  const updated = prev.map((x, i) => i === idx ? { ...x, t2: v } : x)
+  const g = updated[idx]
+  supabase.from('ko_games').upsert({
+    match_id: 'SF1',
+    game_number: idx + 1,
+    team1_score: g.t1 === '' ? null : Number(g.t1),
+    team2_score: g.t2 === '' ? null : Number(g.t2),
+  }).then(({ error }) => { if (error) console.error(error) })
+  return updated
+})                  }}
                 />
                 <span>VS</span>
                 <input
@@ -869,8 +906,17 @@ const sf2Winner = sf2w1 >= 2 ? sf2t1 : sf2w2 >= 2 ? sf2t2 : null;
                   disabled={!enabled || locked}
                   onChange={e => {
                     const v = e.target.value.replace(/\D/g, "").slice(0, 2);
-                    setSf2(prev => prev.map((x, i) => i === idx ? { ...x, t2: v } : x));
-                  }}
+setSf2(prev => {
+  const updated = prev.map((x, i) => i === idx ? { ...x, t2: v } : x)
+  const g = updated[idx]
+  supabase.from('ko_games').upsert({
+    match_id: 'SF1',
+    game_number: idx + 1,
+    team1_score: g.t1 === '' ? null : Number(g.t1),
+    team2_score: g.t2 === '' ? null : Number(g.t2),
+  }).then(({ error }) => { if (error) console.error(error) })
+  return updated
+})                  }}
                 />
               </div>
 
