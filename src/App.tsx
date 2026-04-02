@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
+import { supabase } from './supabaseClient';
 
 // ─── CONFIG ────────────────────────────────────────────────────────────────
 const GAMES_START = new Date('2026-04-15T17:00:00+02:00')
@@ -586,8 +587,25 @@ function StandingsCard({ group, data }: { group: string; data: any[] }) {
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
 export default function App() {
   const [teams] = useState(initialTeams);
-  const [groupMatches, setGroupMatches] = useState(initialGroupMatches);
-  const [isAdmin, setIsAdmin] = useState(false);
+const [groupMatches, setGroupMatches] = useState(initialGroupMatches);
+
+useEffect(() => {
+  async function loadScores() {
+    const { data, error } = await supabase.from('group_matches').select('*')
+    if (error) { console.error(error); return; }
+    if (!data?.length) return;
+    setGroupMatches(prev => prev.map(m => {
+      const row = data.find(r => r.id === m.id)
+      if (!row) return m
+      return {
+        ...m,
+        team1Games: row.team1_score?.toString() ?? '',
+        team2Games: row.team2_score?.toString() ?? '',
+      }
+    }))
+  }
+  loadScores()
+}, [])  const [isAdmin, setIsAdmin] = useState(false);
 const [isLocked, setIsLocked] = useState(DEFAULT_LOCKED);
 const [sf1, setSf1] = useState([
   { t1: "", t2: "" },
