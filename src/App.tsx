@@ -721,7 +721,7 @@ const sf2Winner = sf2w1 >= 2 ? sf2t1 : sf2w2 >= 2 ? sf2t2 : null;
       game_number: idx + 1,
       team1_score: g.t1 === '' ? null : Number(g.t1),
       team2_score: g.t2 === '' ? null : Number(g.t2),
-    }, { onConflict: 'match_id,game_number' }).then(({ error }) => { if (error) console.error(error) })
+  }, { onConflict: 'match_id,game_number' }).then(({ error }) => { if (error) console.error(error) })
     return updated
   })
 
