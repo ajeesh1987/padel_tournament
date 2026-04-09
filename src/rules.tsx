@@ -59,28 +59,7 @@ export default function App() {
           </div>
         </section>
 
-        <section className="card">
-          <div className="sectionHeader">
-            <h2>Rules PDF</h2>
-            <a href="/padel-rules.pdf" target="_blank" rel="noreferrer">
-              Open PDF
-            </a>
-          </div>
-
-          <object
-            data="/padel-rules.pdf"
-            type="application/pdf"
-            className="pdfFrame"
-          >
-            <div className="pdfFallback">
-              PDF preview is not available.
-              <br />
-              <a href="/padel-rules.pdf" target="_blank" rel="noreferrer">
-                Open the PDF directly
-              </a>
-            </div>
-          </object>
-        </section>
+      
 
         <section className="gridSection">
           <div className="card">
