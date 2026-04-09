@@ -33,11 +33,11 @@ const rules = [
   "Match pairings are not fixed in advance",
   "First round is assigned by random lottery",
   "From round 2 onwards, pairings follow the leaderboard",
-  "#1 & #3 vs #2 & #4, #5 & #7 vs #6 & #8, and so on",
   "You may play with or against the same player more than once",
   "Some players will rest between rounds because there are 4 courts and 26 players",
   "Final round starts when 15 to 20 minutes remain",
   "Top 16 players qualify for the final round",
+  "Final round pairing will be 1 & 4 vs 2 & 3 and so on",
   "Matches are played to a total of 21 points",
   "Each player serves 2 consecutive points; once to each opponent",
   "Play fair, respect your partners and opponents, and enjoy the game",
@@ -49,8 +49,8 @@ export default function App() {
       <div className="container">
         <section className="hero">
           <div className="heroText">
-            <span className="eyebrow">CCI Padel Event</span>
-            <h1>Mexicano Tournament Rules</h1>
+            <span className="eyebrow">CCI Padel Event 🎾</span>
+            <h1>Mexicano Tournament</h1>
             <p>
               Rotating partners, live rankings, and balanced matches throughout the event.
             </p>
