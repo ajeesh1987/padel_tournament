@@ -1,77 +1,97 @@
 import "./App.css";
 
-const participants: string[] = [
-  "Ajeesh", "Hannes", "Tobias", "Ceyda", "Clare", "Simon", "Ekta", "Magnus",
-  "Mustafa", "Hans VD", "Daniel", "Rajat", "Ganna", "Hans VM", "Bjoern",
-  "Joao", "Devidutta", "Tim", "Quienne", "Vladimir", "Elena", "Rohan",
-  "Julian", "Saurabh", "Oscar", "Torsten",
+const participants = [
+  "Ajeesh",
+  "Hannes",
+  "Tobias",
+  "Ceyda",
+  "Clare",
+  "Simon",
+  "Ekta",
+  "Magnus",
+  "Mustafa",
+  "Hans VD",
+  "Daniel",
+  "Rajat",
+  "Ganna",
+  "Hans VM",
+  "Bjoern",
+  "Joao",
+  "Devidutta",
+  "Tim",
+  "Quienne",
+  "Vladimir",
+  "Elena",
+  "Rohan",
+  "Julian",
+  "Saurabh",
+  "Oscar",
+  "Torsten",
+];
+
+const rules = [
+  "Match pairings are not fixed in advance",
+  "First round is assigned by random lottery",
+  "From round 2 onwards, pairings follow the leaderboard",
+  "#1 & #3 vs #2 & #4, #5 & #7 vs #6 & #8, and so on",
+  "You may play with or against the same player more than once",
+  "Some players will rest between rounds because there are 4 courts and more than 24 players",
+  "Final round starts when 15 to 20 minutes remain",
+  "Top 16 players qualify for the final round",
+  "Matches are played to a total of 21 points",
+  "Each player serves 2 consecutive points",
+  "Each player serves once to each opponent",
+  "Play fair, respect your partners and opponents, and enjoy the game",
 ];
 
 export default function App() {
   return (
     <div className="page">
       <div className="container">
-        {/* --- STYLISH HEADING --- */}
-        <header className="hero">
-          <div className="badge">Padel Event 2024</div>
-          <h1>Mexicano <span className="outline">Tournament</span></h1>
-          <p className="subtitle">Rotating partners • Live ranking • Final round showdown</p>
-        </header>
+        <section className="hero">
+          <div className="heroText">
+            <span className="eyebrow">CCI Padel Event</span>
+            <h1>Mexicano Tournament Rules</h1>
+            <p>
+              Live ranking based format with rotating partners, balanced matchups,
+              and a final round for the top players.
+            </p>
+          </div>
+        </section>
 
-        <main className="content-grid">
-          {/* --- ENHANCED RULES SECTION --- */}
-          <section className="card rules-card">
-            <div className="card-header">
+      
+
+        <section className="gridSection">
+          <div className="card">
+            <div className="sectionHeader">
               <h2>Quick Rules</h2>
             </div>
-            
-            <div className="rules-grid">
-              <div className="rule-group">
-                <h3>Matchmaking</h3>
-                <ul>
-                  <li>First round: Random lottery</li>
-                  <li>Round 2+: Follows leaderboard (#1 & #3 vs #2 & #4)</li>
-                  <li>Resting: Some players rest (4 courts available)</li>
-                </ul>
-              </div>
 
-              <div className="rule-group">
-                <h3>The Game</h3>
-                <ul>
-                  <li>Total of 21 points per match</li>
-                  <li>Each player serves 2 consecutive points</li>
-                  <li>Serve once to each opponent</li>
-                </ul>
-              </div>
+            <ul className="rulesList">
+              {rules.map((rule, index) => (
+                <li key={index}>{rule}</li>
+              ))}
+            </ul>
+          </div>
 
-              <div className="rule-group">
-                <h3>The Finale</h3>
-                <ul>
-                  <li>Finals start with 15-20 mins remaining</li>
-                  <li>Top 16 players qualify</li>
-                  <li>Fair play and respect are mandatory</li>
-                </ul>
-              </div>
-            </div>
-          </section>
-
-          {/* --- PARTICIPANTS SECTION --- */}
-          <section className="card players-card">
-            <div className="card-header">
+          <div className="card">
+            <div className="sectionHeader">
               <h2>Participants</h2>
-              <span className="count-pill">{participants.length} Players</span>
+              <span className="pill">{participants.length} players</span>
             </div>
 
-            <div className="players-grid">
-              {participants.sort().map((name, index) => (
-                <div key={name} className="player-row">
-                  <span className="player-index">{(index + 1).toString().padStart(2, '0')}</span>
-                  <span className="player-name">{name}</span>
+            <div className="playersGrid">
+              {participants.map((name, index) => (
+                <div key={name} className="playerCard">
+                  <span className="playerNumber">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="playerName">{name}</span>
                 </div>
               ))}
             </div>
-          </section>
-        </main>
+          </div>
+        </section>
       </div>
     </div>
   );
