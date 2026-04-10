@@ -4,34 +4,6 @@ import "./App.css";
 // CONFIG
 const GAMES_START = new Date("2026-04-15T17:00:00+02:00");
 
-const participants = [
-  "Ajeesh",
-  "Hannes",
-  "Tobias",
-  "Ceyda",
-  "Clare",
-  "Simon",
-  "Ekta",
-  "Magnus",
-  "Mustafa",
-  "Hans VD",
-  "Daniel",
-  "Rajat",
-  "Ganna",
-  "Hans VM",
-  "Bjoern",
-  "Joao",
-  "Devidutta",
-  "Tim",
-  "Quienne",
-  "Vladimir",
-  "Elena",
-  "Rohan",
-  "Julian",
-  "Saurabh",
-  "Oscar",
-  "Torsten",
-];
 
 // COUNTDOWN
 function useCountdown(target: Date) {
@@ -117,6 +89,34 @@ function Countdown() {
     </div>
   );
 }
+const participants = [
+  "Ajeesh",
+  "Hannes",
+  "Tobias",
+  "Ceyda",
+  "Clare",
+  "Simon",
+  "Ekta",
+  "Magnus",
+  "Mustafa",
+  "Hans VD",
+  "Daniel",
+  "Rajat",
+  "Ganna",
+  "Hans VM",
+  "Bjoern",
+  "Joao",
+  "Devidutta",
+  "Tim",
+  "Quienne",
+  "Vladimir",
+  "Elena",
+  "Rohan",
+  "Julian",
+  "Saurabh",
+  "Oscar",
+  "Torsten",
+];
 
 const rules = [
   "Match pairings are not fixed in advance",
