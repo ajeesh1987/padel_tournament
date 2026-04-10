@@ -36,7 +36,19 @@ const participants = [
 // COUNTDOWN
 function useCountdown(target: Date) {
   const calc = () => {
-    const diff = target.getTime() - Date.now();
+    const targetTime = target.getTime();
+
+    if (Number.isNaN(targetTime)) {
+      return {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        done: true,
+      };
+    }
+
+    const diff = targetTime - Date.now();
 
     if (diff <= 0) {
       return {
