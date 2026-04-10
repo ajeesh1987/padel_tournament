@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 
 // CONFIG
-const GAMES_START = new Date("2026-04-15T17:00:00+02:00");
+const GAMES_START = new Date("2026-04-9T17:00:00+02:00");
 
 const participants = [
   "Ajeesh",
